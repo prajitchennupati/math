@@ -52,7 +52,7 @@ The polynomial in (ii) is called the \emph{Jack hit polynomial} on the SymCat da
 Since $\{\binom{\alpha+k}{n}\}_{0\le k\le n}$ is a basis of polynomials of degree at most $n$, the $a_k$ are
 well defined. (The source sums the expansion over $k\le n-1$ but the polynomial over $k\le n$; for the pair
 below $a_0=a_{13}=\dots=a_{16}=0$, so this does not matter.)
-The paper proves the case $\mu=(n)$ and the hook case $\mu=\lambda$, and reports computer verification for
+Alexandersson, Haglund and Wang prove the case $\mu=(n)$ and the hook case $\mu=\lambda$, and report computer verification for
 $n\le 11$ \cite{AHW18}. A companion Conjecture~2 uses the basis $\binom{\alpha}{k}k!$; part (ii) of
 Conjecture~\ref{conj} implies part (ii) of Conjecture~2 \cite{AHW18}.
 
@@ -138,7 +138,7 @@ root isolation independently returns $9$ real zeros and the conjugate pair state
 
 \emph{Independent confirmations.} Two further implementations reproduce the same $p(\alpha)$ and $a_k$
 exactly. The first uses Stanley's Laplace--Beltrami recursion for the monomial coefficients of $P_\mu$, the hook
-normalization, and the inverse Kostka matrix. The second was written in an independent review session: it takes
+normalization, and the inverse Kostka matrix. The second was written independently: it takes
 $J_\mu$ as the one-dimensional kernel of $D(\alpha)-e_\mu$ in the power-sum basis, uses dual Jacobi--Trudi for
 $s_\lambda$, and interpolates at the disjoint points $\alpha=1009,\dots,1043$. The implementations reproduce the
 proved cases $\langle\Jt_\mu,s_\mu\rangle=\prod_{s\in\mu}(\mathrm{arm}(s)+\alpha(\mathrm{leg}(s)+1))$ and the
@@ -146,7 +146,7 @@ $\mu=(n)$ formula of \cite{AHW18}, and the example $\mu=\lambda=(3)$ listed on \
 
 \section{Formal verification}
 
-The Lean~4 file \texttt{lean-formalization/JackHit.lean} (Mathlib v4.36.0) proves the following.
+The Lean~4 file \texttt{lean-formalization/JackHit.lean} in the accompanying repository (see Reproducibility; Mathlib v4.36.0) proves the following.
 \begin{itemize}
 \item \texttt{p\_eq\_binomial\_expansion}: for every $\alpha\in\mathbb Q$,
 $p(\alpha)=\sum_{k=0}^{16}a_k\binom{\alpha+k}{16}$ with the explicit $a_k$ of Table~\ref{tab}.
@@ -180,16 +180,18 @@ this example: the rook polynomial of this pair is real-rooted.
 \end{remark}
 
 \subsection*{Reproducibility}
-\texttt{paper/code/verify.py} recomputes Theorem~\ref{thm} from scratch in under one second (python-flint 0.9,
+{\sloppy All code and the Lean formalization are available at
+\url{https://github.com/prajitchennupati/math/tree/main/jack-hit-polynomial-counterexample}; paths below are
+relative to that folder. \texttt{paper/code/verify.py} recomputes Theorem~\ref{thm} from scratch in under one second (python-flint 0.9,
 SymPy 1.14). \texttt{paper/code/jack.py} and \texttt{paper/code/search.py} implement the second method and the
 exhaustive search, and \texttt{paper/code/independent/} contains the third implementation. The Lean
-formalization is in \texttt{lean-formalization/}. This note has not been refereed.
+formalization is in \texttt{lean-formalization/}. This note has not been refereed.\par}
 
 \begin{thebibliography}{9}
 \bibitem{AHW18} P.~Alexandersson, J.~Haglund, G.~Wang, \emph{On the Schur expansion of Jack polynomials},
 FPSAC 2018, S\'em. Lothar. Combin. 80B (2018), Art.~90; arXiv:1805.00511.
-\bibitem{AHW21} P.~Alexandersson, J.~Haglund, G.~Wang, \emph{On the Schur expansion of Jack polynomials},
-J. Comb. 12 (2021); arXiv:1810.12763.
+\bibitem{AHW21} P.~Alexandersson, J.~Haglund, G.~Wang, \emph{Some conjectures on the Schur expansion of Jack
+polynomials}, J. Comb. 12 (2021), 215--233; arXiv:1810.12763.
 \bibitem{KS97} F.~Knop, S.~Sahi, \emph{A recursion and a combinatorial formula for Jack polynomials},
 Invent. Math. 128 (1997), 9--22.
 \bibitem{Mac} I.~G.~Macdonald, \emph{Symmetric Functions and Hall Polynomials}, 2nd ed., Oxford, 1995.
