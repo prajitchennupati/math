@@ -1,6 +1,6 @@
 # Math proofs
 
-Proofs, counterexamples and formalizations by Prajit Chennupati and Aashrith Nalam.
+Proofs, counterexamples and formalizations by Prajit Chennupati (may include others).
 Each result lives in its own folder with the paper, the code needed to reproduce every computation, and a
 Lean formalization where available.
 
