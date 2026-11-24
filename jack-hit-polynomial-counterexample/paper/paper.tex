@@ -1,0 +1,202 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Jt}{\widetilde{J}}
+\newcommand{\binomb}[2]{\tbinom{#1}{#2}}
+
+\title{Off the Real Line\\[0.4em]\large A counterexample to the real-rootedness of Jack hit polynomials}
+\author{Prajit Chennupati\\ \small\texttt{chennupati@gatech.edu} \and Aashrith Nalam\\ \small\texttt{analam3@gatech.edu}}
+\date{November 24, 2026}
+
+
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+Alexandersson, Haglund and Wang conjectured that the coefficients $a_k(\mu,\lambda)$ in the expansion
+$\langle \alpha^n J_\mu^{(1/\alpha)}, s_\lambda\rangle=\sum_k a_k(\mu,\lambda)\binom{\alpha+k}{n}$ are
+nonnegative integers and that $\sum_k a_k(\mu,\lambda)z^k$ has only real zeros. We show that the
+real-rootedness assertion fails for $\mu=(8,8)$, $\lambda=(2^8)$: the polynomial has degree $12$, a simple
+zero at $0$, and exactly $9$ further real zeros, so two of its zeros are non-real. The proof is
+computer-assisted and uses exact arithmetic only. The polynomial identities and the non-real-rootedness are
+formally verified in Lean~4 with Mathlib. The positivity assertion holds for this pair, and an exhaustive
+search finds no other failure with $n\le 17$.
+\end{abstract}
+
+\section{The conjecture}
+
+Let $J_\mu^{(\alpha)}$ be the integral form Jack symmetric function, normalized so that the coefficient of
+$m_{1^n}$ is $n!$ \cite{Mac,Sta}, and let $\langle\cdot,\cdot\rangle$ be the Hall inner product. Following
+\cite{AHW18,AHW21} put
+\[
+  \Jt_\mu^{(\alpha)} := \alpha^{n} J_\mu^{(1/\alpha)}, \qquad n=|\mu| .
+\]
+
+\begin{conjecture}[{Alexandersson--Haglund--Wang \cite[Conj.~1]{AHW18,AHW21}}]\label{conj}
+Let $\mu,\lambda$ be partitions of $n$ and write
+$\langle \Jt_\mu^{(\alpha)}, s_\lambda\rangle=\sum_{k} a_k(\mu,\lambda)\binom{\alpha+k}{n}$. Then
+\textup{(i)} $a_k(\mu,\lambda)\in\mathbb N$, and \textup{(ii)} the polynomial
+$\sum_{k=0}^{n}a_k(\mu,\lambda)z^k$ has only real zeros.
+\end{conjecture}
+
+The polynomial in (ii) is called the \emph{Jack hit polynomial} on the SymCat database \cite{SymCat}.
+Since $\{\binom{\alpha+k}{n}\}_{0\le k\le n}$ is a basis of polynomials of degree at most $n$, the $a_k$ are
+well defined. (The source sums the expansion over $k\le n-1$ but the polynomial over $k\le n$; for the pair
+below $a_0=a_{13}=\dots=a_{16}=0$, so this does not matter.)
+The paper proves the case $\mu=(n)$ and the hook case $\mu=\lambda$, and reports computer verification for
+$n\le 11$ \cite{AHW18}. A companion Conjecture~2 uses the basis $\binom{\alpha}{k}k!$; part (ii) of
+Conjecture~\ref{conj} implies part (ii) of Conjecture~2 \cite{AHW18}.
+
+\section{The counterexample}
+
+\begin{theorem}\label{thm}
+Let $\mu=(8,8)$ and $\lambda=(2^8)$, so $n=16$. Then
+\begin{align*}
+p(\alpha):=\langle \Jt_\mu^{(\alpha)}, s_\lambda\rangle
+ &= 112\,\alpha^2(\alpha-1)^2(\alpha-2)^2(\alpha-3)^2(\alpha+1)(2\alpha+1)\\
+ &\qquad\times(104\alpha^6-684\alpha^5+2258\alpha^4-2901\alpha^3+8033\alpha^2+4530\alpha+12600),
+\end{align*}
+the coefficients $a_k=a_k(\mu,\lambda)$ are the nonnegative integers in Table~\ref{tab}, and the hit polynomial
+$H(z)=\sum_{k=0}^{16}a_kz^k$ is not real-rooted. Precisely, $H(z)=z\,h(z)$ where $h$ has degree $11$, is
+squarefree, and has exactly $9$ real zeros. Its non-real zeros are
+\[
+ -10.52898876935\ldots \pm 2.39070820941\ldots\, i .
+\]
+Hence part \textup{(ii)} of Conjecture~\ref{conj} is false.
+\end{theorem}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rr@{\qquad}rr}
+\toprule
+$k$ & $a_k$ & $k$ & $a_k$\\
+\midrule
+1 & 597\,793\,996\,800 & 7 & 146\,689\,299\,490\,406\,400\\
+2 & 73\,236\,035\,174\,400 & 8 & 68\,260\,823\,569\,612\,800\\
+3 & 2\,004\,440\,894\,668\,800 & 9 & 15\,222\,991\,343\,616\,000\\
+4 & 19\,314\,619\,527\,168\,000 & 10 & 1\,568\,059\,637\,760\,000\\
+5 & 79\,659\,352\,571\,904\,000 & 11 & 68\,516\,388\,864\,000\\
+6 & 154\,554\,571\,254\,988\,800 & 12 & 804\,722\,688\,000\\
+\bottomrule
+\end{tabular}
+\caption{The coefficients $a_k((8,8),(2^8))$; all other $a_k$ ($k=0$ and $13\le k\le16$) vanish. All
+are divisible by $2\,090\,188\,800$.}\label{tab}
+\end{table}
+
+The real-rootedness failure has a short certificate, which is the part checked in Lean.
+
+\begin{lemma}\label{lem}
+If $f\in\mathbb R[x]$ is a real constant times a product of real linear factors $x-r_i$, then
+$f'(x)^2-f(x)f''(x)\ge 0$ for all real $x$.
+\end{lemma}
+
+\begin{proof}
+Write $Q_f(x)=f'(x)^2-f(x)f''(x)$. Constants have $Q=0$. If $f=(x-r)g$, then $f'=g+(x-r)g'$ and
+$f''=2g'+(x-r)g''$, so $Q_f(x)=g(x)^2+(x-r)^2Q_g(x)$. Induct on the number of factors.
+\end{proof}
+
+For $H$ at $x=-10$ one computes exactly
+\begin{align*}
+H(-10)&=-83\,342\,017\,288\,983\,011\,328\,000,\\
+H'(-10)&=68\,364\,158\,223\,859\,539\,148\,800,\\
+H''(-10)&=-71\,278\,550\,656\,400\,528\,179\,200,
+\end{align*}
+so $Q_H(-10)=H'(-10)^2-H(-10)H''(-10)\approx-1.2668\times10^{45}<0$. By Lemma~\ref{lem}, $H$ does not have only
+real zeros. The exact root count ($9$ real zeros of $h$) is a strengthening obtained by Sturm's theorem.
+
+\section{Proof of Theorem~\ref{thm}}
+
+The theorem combines two published facts with an exact computation.
+\begin{itemize}
+\item[(H1)] $P_\mu^{(\beta)}$ is the unique symmetric function of the form $m_\mu+\sum_{\rho<\mu}u_{\mu\rho}m_\rho$
+(dominance order) orthogonal to all $P_\rho^{(\beta)}$, $\rho\neq\mu$, for
+$\langle p_\sigma,p_\tau\rangle_\beta=\delta_{\sigma\tau}z_\sigma\beta^{\ell(\sigma)}$. Moreover
+$J_\mu^{(\beta)}=c_\mu(\beta)P_\mu^{(\beta)}$ with $[m_{1^n}]J_\mu^{(\beta)}=n!$ \cite{Mac,Sta}.
+\item[(H2)] The monomial coefficients of $J_\mu^{(\beta)}$ are polynomials in $\beta$ of degree at most $n$
+\cite{KS97}. Hence $p(\alpha)$ is a polynomial of degree at most $16$.
+\end{itemize}
+
+\emph{Computation.} Fix $\beta=1/\alpha$ with $\alpha\in\{1,\dots,18\}$. The set $D=\{\rho:\rho<\mu\}$ is a
+down-set, so $\mathrm{span}\{P_\rho:\rho\in D\}=\mathrm{span}\{m_\rho:\rho\in D\}$. Therefore the coefficients
+$u_{\mu\rho}$ solve the linear system $\langle P_\mu,m_\rho\rangle_\beta=0$, $\rho\in D$. Its Gram matrix is
+positive definite, so the solution is unique. We form the exact integer transition matrix between power sums and
+monomials, solve the system over $\mathbb Q$, normalize by $[m_{1^n}]J=n!$, and compute
+$\langle J,s_\lambda\rangle=\sum_\sigma c_\sigma\chi^\lambda(\sigma)$ for $J=\sum_\sigma c_\sigma p_\sigma$, with
+characters from the Murnaghan--Nakayama rule. The $17$ values at $\alpha=1,\dots,17$ determine $p$ by (H2).
+The value at $\alpha=18$ is a consistency check. Solving for the $a_k$ in the basis $\binom{\alpha+k}{16}$ gives
+Table~\ref{tab}. Finally, $\gcd(h,h')=1$, Sturm's theorem gives $9$ real zeros of $h$, and FLINT/Arb rigorous
+root isolation independently returns $9$ real zeros and the conjugate pair stated.
+
+\emph{Independent confirmations.} Two further implementations reproduce the same $p(\alpha)$ and $a_k$
+exactly. The first uses Stanley's Laplace--Beltrami recursion for the monomial coefficients of $P_\mu$, the hook
+normalization, and the inverse Kostka matrix. The second was written in an independent review session: it takes
+$J_\mu$ as the one-dimensional kernel of $D(\alpha)-e_\mu$ in the power-sum basis, uses dual Jacobi--Trudi for
+$s_\lambda$, and interpolates at the disjoint points $\alpha=1009,\dots,1043$. The implementations reproduce the
+proved cases $\langle\Jt_\mu,s_\mu\rangle=\prod_{s\in\mu}(\mathrm{arm}(s)+\alpha(\mathrm{leg}(s)+1))$ and the
+$\mu=(n)$ formula of \cite{AHW18}, and the example $\mu=\lambda=(3)$ listed on \cite{SymCat}.
+
+\section{Formal verification}
+
+The Lean~4 file \texttt{lean-formalization/JackHit.lean} (Mathlib v4.36.0) proves the following.
+\begin{itemize}
+\item \texttt{p\_eq\_binomial\_expansion}: for every $\alpha\in\mathbb Q$,
+$p(\alpha)=\sum_{k=0}^{16}a_k\binom{\alpha+k}{16}$ with the explicit $a_k$ of Table~\ref{tab}.
+\item \texttt{hitPoly\_not\_realRooted}: $H$ is not of the form $c\prod_i(z-r_i)$ with $c,r_i\in\mathbb R$.
+This goes through Lemma~\ref{lem} and the evaluation at $-10$.
+\end{itemize}
+Both theorems depend only on the axioms \texttt{propext}, \texttt{Classical.choice} and \texttt{Quot.sound}; no
+\texttt{sorry} or \texttt{native\_decide} is used. The identity
+$p(\alpha)=\langle\Jt_{(8,8)}^{(\alpha)},s_{(2^8)}\rangle$ is \emph{not} formalized, since Jack polynomials are
+not available in Mathlib. It is the computer-verified hypothesis of the formal statement.
+
+\section{Remarks}
+
+\begin{remark}
+An exhaustive exact search over all pairs $\mu,\lambda\vdash n$ with $n\le 17$ finds that parts (i) and (ii) of
+Conjecture~\ref{conj} and of Conjecture~2 hold in every case except the pair of Theorem~\ref{thm}, which fails
+only (ii) of Conjecture~\ref{conj}. Thus $n=16$ is the smallest size of a counterexample. This minimality
+statement relies on one implementation only.
+\end{remark}
+
+\begin{remark}
+In the family $\mu=(k,k)$, $\lambda=(2^k)$, the hit polynomial is real-rooted for $k\le 7$ and $k\in\{9,11\}$
+and fails to be real-rooted for $k\in\{8,10,12\}$ (real zeros of the core versus its degree: $9/11$, $12/14$,
+$15/17$). We do not know whether it fails for all even $k\ge 8$.
+\end{remark}
+
+\begin{remark}
+Part (i) of Conjecture~\ref{conj} and both parts of Conjecture~2 (the ``rook'' version) remain open. The
+SymCat remark that real-rootedness of hit polynomials would imply that of rook polynomials is consistent with
+this example: the rook polynomial of this pair is real-rooted.
+\end{remark}
+
+\subsection*{Reproducibility}
+\texttt{paper/code/verify.py} recomputes Theorem~\ref{thm} from scratch in under one second (python-flint 0.9,
+SymPy 1.14). \texttt{paper/code/jack.py} and \texttt{paper/code/search.py} implement the second method and the
+exhaustive search, and \texttt{paper/code/independent/} contains the third implementation. The Lean
+formalization is in \texttt{lean-formalization/}. This note has not been refereed.
+
+\begin{thebibliography}{9}
+\bibitem{AHW18} P.~Alexandersson, J.~Haglund, G.~Wang, \emph{On the Schur expansion of Jack polynomials},
+FPSAC 2018, S\'em. Lothar. Combin. 80B (2018), Art.~90; arXiv:1805.00511.
+\bibitem{AHW21} P.~Alexandersson, J.~Haglund, G.~Wang, \emph{On the Schur expansion of Jack polynomials},
+J. Comb. 12 (2021); arXiv:1810.12763.
+\bibitem{KS97} F.~Knop, S.~Sahi, \emph{A recursion and a combinatorial formula for Jack polynomials},
+Invent. Math. 128 (1997), 9--22.
+\bibitem{Mac} I.~G.~Macdonald, \emph{Symmetric Functions and Hall Polynomials}, 2nd ed., Oxford, 1995.
+\bibitem{Sta} R.~P.~Stanley, \emph{Some combinatorial properties of Jack symmetric functions},
+Adv. Math. 77 (1989), 76--115.
+\bibitem{SymCat} P.~Alexandersson, \emph{The symmetric functions catalog}, \url{https://www.symmetricfunctions.com/jack.htm}
+(accessed November 2026).
+\end{thebibliography}
+
+\end{document}
