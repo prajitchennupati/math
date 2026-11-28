@@ -1,0 +1,731 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,booktabs,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\La}{\Lambda}
+\newcommand{\Pl}{\mathrm{Pl}}
+\newcommand{\Res}{\operatorname{Res}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Gr}{\operatorname{Gr}}
+\newcommand{\soc}{\operatorname{soc}}
+\newcommand{\qbin}[2]{\begin{bmatrix}#1\\#2\end{bmatrix}_q}
+\newcommand{\fE}{\mathfrak{E}}
+
+\title{Dyck Paths in the Nullspace\\[0.4em]\large A proof of the Clifford--Stanley--Alexandersson conjecture on the
+power-sum to monomial transition matrix}
+\author{Prajit Chennupati\\ \small\texttt{chennupati@gatech.edu}}
+\date{November 27, 2026}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+Let $R_n$ be the matrix expressing the power sums $p_\lambda$ ($\lambda\vdash n$) in the monomial basis, and let
+$D_n$ be its diagonal. Clifford and Stanley computed the nullity of $R_n-D_n$ for small $n$ but did not conjecture
+its value. Alexandersson conjectured in 2019 that it equals the number of Dyck paths whose peak abscissae sum
+to $n$ (OEIS A129528). We prove this conjecture. More precisely, we show that the nullspace, filtered by the
+length of partitions, has graded pieces of dimension $[q^{n-d}]\,C_d(q)$, where $C_d(q)$ is MacMahon's
+$q$-Catalan number. The proof turns the nullspace into the invariants of a one-parameter group acting on power series.
+For the leading part of this group, writing a series as a ratio $u=v/w$ identifies the invariants with
+$\Hom_{S_{2d}}(S^{(d,d)},R_{2d})^*$, where $R_{2d}$ is the coinvariant algebra. To control the full group we
+prove two further results. First, the top invariant lifts, through an explicit sum over rooted forests. Second,
+the whole space of invariants is generated from the top one by reparametrizations of the series variable. The
+second result is proved in the cohomology of the Grassmannian $\Gr(d,2d)$, using a screening operator on the
+$c=1$ Fock space.
+\end{abstract}
+
+\section{The conjecture}
+
+Let $\La$ be the ring of symmetric functions over $\Q$, with power sums $p_\lambda$, monomial symmetric functions
+$m_\mu$ and complete homogeneous functions $h_\lambda$ \cite{Mac}. For $\lambda,\mu\vdash n$ define $R_{\lambda\mu}$ by
+\[
+  p_\lambda=\sum_{\mu\vdash n}R_{\lambda\mu}\,m_\mu ,
+\]
+and let $D_n=\operatorname{diag}(R_{\lambda\lambda})$. Clifford and Stanley \cite{CS04} met the matrix $R_n-D_n$ in their study of
+bottom Schur functions. They computed its nullity for small $n$, obtaining
+$1,\allowbreak1,\allowbreak1,\allowbreak2,\allowbreak2,\allowbreak3,\allowbreak4,\allowbreak5,\allowbreak7,\allowbreak9,\allowbreak11,\allowbreak15,\allowbreak19,\allowbreak24,\allowbreak\dots$, and remarked that they had no conjecture for its value. In 2019
+Alexandersson observed that these numbers match OEIS A129528 \cite{OEIS}, and recorded the following on the
+symmetric functions catalog \cite{SymCat}.
+
+\begin{conjecture}[{Alexandersson, 2019 \cite{SymCat}}]\label{conj}
+For every $n\ge1$, $\dim_\Q\ker(R_n-D_n)$ equals the number $a(n)$ of Dyck paths (of any semilength) whose peak
+abscissae sum to $n$.
+\end{conjecture}
+
+Here a Dyck path of semilength $d$ is a word in $U=(1,1)$ and $D=(1,-1)$ that starts and ends at height $0$ and never
+goes below it. A peak is a factor $UD$, and its abscissa is the $x$-coordinate of its top. For example $UD$ has
+peak sum $1$, and $UUDD$ has peak sum $2$.
+
+\begin{theorem}\label{main}
+Conjecture~\ref{conj} is true: $\dim_\Q\ker(R_n-D_n)=a(n)$ for all $n\ge1$.
+\end{theorem}
+
+We prove a refinement. Write $\ell(\lambda)$ for the length of a partition and $C_d(q)=\qbin{2d}{d}/[d+1]_q$
+for MacMahon's $q$-Catalan number.
+
+\begin{theorem}\label{refined}
+Let $F_{\ge d}\subseteq\La^n$ be the span of the $h_\lambda$ with $\ell(\lambda)\ge d$. Under the identification
+of Section~\ref{sec:reduction}, the nullspace of $R_n-D_n$ becomes a subspace $N\subseteq\La^n$ such that
+\[
+  \dim\bigl(N\cap F_{\ge d}\bigr)/\bigl(N\cap F_{\ge d+1}\bigr)=[q^{\,n-d}]\,C_d(q)\qquad(1\le d\le n).
+\]
+\end{theorem}
+
+Summing over $d$ gives Theorem~\ref{main}, because $\sum_d q^dC_d(q)$ counts Dyck paths by peak sum
+(Section~\ref{sec:dyck}).
+
+\paragraph{Outline.}
+\begin{itemize}
+\item Section~\ref{sec:reduction} identifies the nullspace with the kernel of a derivation $D_v$ of
+$\La=\Q[h_1,h_2,\dots]$. Here $D_v$ is induced by a formal vector field $v(u)\partial_u$ acting on power
+series $u=\sum h_kt^k$, and $v$ is the iterative logarithm of $\log(1+u)$.
+\item Section~\ref{sec:thmC} computes the kernel of the leading part $u^2\partial_u$ (Theorem~\ref{thmC}),
+using Pl\"ucker coordinates, Schur--Weyl duality and Chevalley's theorem.
+\item Section~\ref{sec:dyck} gives the Dyck path count.
+\item Section~\ref{sec:lower} reduces $v$ to the normal form $u^2/(1+\mu u)$. It also shows that the lower bound
+follows from two results: Theorem~\ref{thmL} (the top invariant lifts), proved in Section~\ref{sec:L}, and
+Theorem~\ref{cyc} (cyclicity), proved in Section~\ref{sec:cyc}.
+\item Section~\ref{sec:proof} assembles the proof.
+\end{itemize}
+
+\section{Reduction to a derivation}\label{sec:reduction}
+
+Throughout, $h_k$ has weight $k$, $\La^n$ is the weight-$n$ part of $\La$, and $\La_{n,d}=\La^n\cap\Q[h]_{\deg d}$
+is the part of length $d$. For a formal power series $V(u)=\sum_{j\ge2}V_ju^j$, let $D_V$ be the derivation of
+$\La$ given by
+\[
+  D_V(h_k)=[t^k]\,V(u(t)),\qquad u(t)=\sum_{k\ge1}h_kt^k .
+\]
+$D_V$ preserves weight and raises length by at least one. Thus it acts nilpotently on each $\La^n$.
+
+\begin{proposition}\label{R1}
+Let $T$ be the algebra automorphism of $\La$ with $T(h_k)=p_k/k$. Then $x\in\ker(R_n-D_n)$ if and only if
+$g=\sum_\mu x_\mu h_\mu$ satisfies $T(g)=g$. Moreover $\ker(T-I)=\ker D_v$ on $\La^n$, where $v(u)\partial_u$
+is the unique formal vector field with $v=O(u^2)$ whose time-one flow is $u\mapsto\log(1+u)$.
+\end{proposition}
+
+\begin{proof}
+$R_{\lambda\mu}$ counts the maps from the parts of $\lambda$ to the parts of $\mu$ whose fibre sums are the parts of
+$\mu$. For $\mu=\lambda$ such a map permutes parts of equal size, so $R_{\lambda\lambda}=\prod_im_i(\lambda)!$.
+
+Use the Hall inner product, for which $\langle h_\lambda,m_\mu\rangle=\delta_{\lambda\mu}$ and
+$\langle p_\lambda,p_\mu\rangle=z_\lambda\delta_{\lambda\mu}$, where $z_\lambda=\prod_ii^{m_i}m_i!$. For
+$g=\sum_\mu x_\mu h_\mu$ we have $\langle p_\lambda,g\rangle=\sum_\mu R_{\lambda\mu}x_\mu$ and also
+$\langle p_\lambda,g\rangle=z_\lambda[p_\lambda]g$. Hence $(R_n-D_n)x=0$ if and only if
+$z_\lambda[p_\lambda]g=R_{\lambda\lambda}[h_\lambda]g$ for all $\lambda$, that is,
+$[h_\lambda]g=(\prod_j\lambda_j)[p_\lambda]g$. This says exactly that $g=\sum c_\lambda h_\lambda=\sum c_\lambda
+q_\lambda$ with $q_\lambda=\prod_jp_{\lambda_j}/\lambda_j$, i.e.\ $T(g)=g$. All steps are reversible.
+
+Since $\sum_kq_kt^k=\log H(t)$ with $H=1+\sum h_kt^k$, $T$ is induced by the pointwise map $u\mapsto\log(1+u)$.
+Thus $T-I$ raises length and is nilpotent on $\La^n$. So $\log T$ is a finite sum and a derivation, and
+$\ker\log T=\ker(T-I)$, because $\log T=(T-I)\cdot(\text{a polynomial in }T-I\text{ with constant term }1)$. By the
+chain rule $D_v(g(u))=g'(u)v(u)$, $\exp(sD_v)$ acts on $u(t)$ as the time-$s$ flow of $v\partial_u$. So
+$\exp(D_v)$ and $T$ agree on every $h_k$, and $D_v=\log T$.
+\end{proof}
+
+One computes $v=-\tfrac12u^2+\tfrac1{12}u^3+O(u^4)$. In particular the leading part of $D_v$ is $-\frac12D$, where
+\[
+  D:=D_{u^2},\qquad D(h_k)=\sum_{i+j=k,\ i,j\ge1}h_ih_j .
+\]
+$D$ is homogeneous: it maps $\La_{n,d}$ to $\La_{n,d+1}$. Write $K_{n,d}=\ker(D\colon\La_{n,d}\to\La_{n,d+1})$ and
+$K_d=\bigoplus_nK_{n,d}$.
+
+\section{The kernel of the leading derivation}\label{sec:thmC}
+
+\begin{theorem}\label{thmC}
+For every $d\ge0$,
+\[
+  \sum_n\dim K_{n,d}\;q^n=f^{(d,d)}(q)=q^d\,\qbin{2d}{d}\frac{1}{[d+1]_q},
+\]
+where $f^{(d,d)}(q)=\sum_{T\in\mathrm{SYT}(d,d)}q^{\mathrm{maj}(T)}$ is the fake degree of the Specht module
+$S^{(d,d)}$, i.e.\ the graded multiplicity of $S^{(d,d)}$ in the coinvariant algebra
+$R_{2d}=\Q[x_1,\dots,x_{2d}]/(\La^+_{2d})$.
+\end{theorem}
+
+\begin{proof}
+Fix $n$ and let $m\ge\max(n+1,3)$. Put $V=\Q[t]/(t^m)$, and give $t^i$ (and the $i$-th coordinates below) weight
+$i$. All statements in weight $n$ involve only coefficients of index at most $n$, so they do not depend on $m$.
+
+\emph{(a) Pairs.}
+\begin{itemize}
+\item For $f\in\La$ of length $d$, put $F(v,w)=f(v/w)$ for $v\in tV$ and $w\in1+tV$. Then $F$ is polynomial in the
+coefficients of $v$ and $w$, homogeneous of degree $d$ in $v$, and invariant under $(v,w)\mapsto(rv,rw)$ for $r$
+in the unit group $U_1=1+tV$.
+\item Since $v/(w-\varepsilon v)=u/(1-\varepsilon u)$ and $u\mapsto u/(1-\varepsilon u)$ is the flow of
+$u^2\partial_u$, we have $Df=0$ if and only if $F$ is invariant under the unipotent map
+$(v,w)\mapsto(v,w-\varepsilon v)$.
+\item Conversely, $f(u)=F(u,1)$.
+\end{itemize}
+
+\emph{(b) Pl\"ucker extension.} Let $F$ be unipotent-invariant, and let $\omega=a\wedge b\in\wedge^2V$ be
+decomposable with some $\omega_{0j}\ne0$.
+\begin{itemize}
+\item If $a_0=b_0=0$ then every $\omega_{0j}=0$. So the plane $\langle a,b\rangle$ contains $w$ with $w_0=1$
+and $v$ with $v_0=0$, scaled so that $\omega=v\wedge w$. The pair $(v,w)$ is unique up to $w\mapsto w+\beta v$,
+so $\Phi(\omega):=F(v,w)$ is well defined and homogeneous of degree $d$.
+\item On $\{\omega_{0i}\ne0\}$ we have $v_j=-\omega_{0j}$, and normalizing $w_i=0$ gives
+$w_j=-\omega_{ij}/\omega_{0i}$. So $\Phi\in A[1/\omega_{0i}]$ for every $i$, where $A$ is the homogeneous
+coordinate ring of the cone over $\Gr(2,V)$. The local expressions agree on dense open sets, so they define one
+element of $\operatorname{Frac}(A)$.
+\item $A$ is the ring of $SL_2$-invariants of $\Q[V\oplus V]$, hence normal. The common zero locus of the
+$\omega_{0i}$ on the cone is the cone over $\Gr(2,tV)$, of dimension $2m-5$ inside a cone of dimension $2m-3$. So
+no height-one prime contains all the $\omega_{0i}$, and $\bigcap_iA[1/\omega_{0i}]=A$. Hence $\Phi\in A_d=:\Pl_d$.
+\item Invariance of $F$ under the connected unipotent group $U_1$ is equivalent to $T_k\Phi=0$ for all $k\ge1$,
+where $T_k$ is the derivation induced by multiplication by $t^k$ on $V$. Conversely every
+$\Phi\in\Pl_d^T:=\{\Phi:T_k\Phi=0\ \forall k\}$ gives such an $F$, by $F(v,w)=\Phi(v\wedge w)$.
+\end{itemize}
+The substitution $t\mapsto\lambda t$ scales $\omega_{ij}$ by $\lambda^{i+j}$ and $h_k$ by $\lambda^k$. So these
+maps preserve weight, and $K_{n,d}\cong(\Pl_d^T)_n$.
+
+\emph{(c) Schur--Weyl.} $\Pl_d\cong S_{(d,d)}(V)^*$ \cite{Ful}. Set
+$M=\Hom_{S_{2d}}(S^{(d,d)},V^{\otimes2d})\cong S_{(d,d)}(V)$, a $GL(V)$-equivariant isomorphism. Here
+$V^{\otimes2d}=\Q[x_1,\dots,x_{2d}]/(x_i^m)$, graded by total degree. Multiplication by $t^k$ on $V$ acts on
+$V^{\otimes2d}$ as multiplication by the power sum $p_k(x)$. Weight-$n$ functions pair with weight-$n$ vectors.
+Hence $(\Pl_d^T)_n\cong((M/\La^+M)_n)^*$, where $\La^+$ is the ideal generated by the $p_k$, and in degrees
+below $m$ the truncation is invisible.
+
+\emph{(d) Chevalley.} $\Q[x_1,\dots,x_{2d}]\cong\La_{2d}\otimes R_{2d}$ as graded $S_{2d}$- and $\La_{2d}$-modules
+\cite{Che}. So $M/\La^+M\cong\Hom_{S_{2d}}(S^{(d,d)},R_{2d})$. Its graded dimension is the fake degree
+$f^{(d,d)}(q)=q^{b(\lambda)}[2d]_q!/\prod_{c}[h(c)]_q$ \cite{Sta79}. For $\lambda=(d,d)$ we have $b=d$ and hook
+product $[d+1]_q![d]_q!$, which gives the stated formula.
+\end{proof}
+
+\section{Dyck paths}\label{sec:dyck}
+
+Write a Dyck path of semilength $d$ as $U^{a_1}D^{b_1}\cdots U^{a_k}D^{b_k}$, with $A_i=a_1+\dots+a_i$,
+$B_i=b_1+\dots+b_i$ and $B_0=0$. Its peaks lie at $x_i=A_i+B_{i-1}$ ($1\le i\le k$), and its valleys at
+$v_i=A_i+B_i$ ($1\le i\le k-1$). Hence $\sum_{i=1}^kx_i-\sum_{i=1}^{k-1}v_i=A_k+B_0=d$.
+
+The sum of valley positions is the major index of the path with descents at $DU$, so MacMahon's theorem
+\cite{MacM} gives $\sum_{P}q^{\sum v_i}=C_d(q)$. Therefore
+\[
+  \sum_{P\text{ of semilength }d}q^{\text{peak sum}}=q^dC_d(q),\qquad\text{so}\qquad
+  a(n)=\sum_d[q^{n-d}]\,C_d(q)=\sum_d\dim K_{n,d}
+\]
+by Theorem~\ref{thmC}.
+
+\section{Strategy for the full derivation}\label{sec:lower}
+
+\subsection{Normal form}
+
+\begin{lemma}\label{normal}
+Let $v=au^2+bu^3+O(u^4)$ with $a\ne0$, and put $\mu=-b/a$ and $V_\mu=u^2/(1+\mu u)$. There is a formal
+$\psi(u)=u+\sum_{j\ge2}c_ju^j$ with $\psi'(u)\,v(u)=a\,V_\mu(\psi(u))$. If $\Theta$ is the weight-preserving
+automorphism $h_k\mapsto[t^k]\psi(u(t))$ of $\La$, then $\Theta^{-1}D_v\Theta=aD_{V_\mu}$.
+\end{lemma}
+
+\begin{proof}
+Compare coefficients of $u^{j+1}$. The unknown $c_j$ enters the left side as $ja\,c_j$ and the right side as
+$2a\,c_j$, plus terms in $c_i$ with $i<j$.
+\begin{itemize}
+\item For $j=2$ the $c_2$ terms cancel, and the $u^3$ equation is $b=-a\mu$, which holds by the choice of $\mu$.
+\item For $j\ge3$ the coefficient of $c_j$ is $a(j-2)\ne0$, so $c_j$ is determined recursively.
+\end{itemize}
+$D_v\circ\Theta$ and $\Theta\circ aD_{V_\mu}$ are $\Theta$-twisted derivations that agree on $u(t)$, so they are
+equal. (Compare the formal normal form of a parabolic vector field \cite{Tak}.)
+\end{proof}
+
+For the vector field $v$ of Proposition~\ref{R1}, $a=-\frac12$ and $\mu=\frac16$. Hence
+$\dim\ker D_v=\dim\ker D_{V_{1/6}}$ on each $\La^n$. Since $\Theta(h_k)=h_k+(\text{longer})$, $\Theta$ preserves
+each $F_{\ge d}$ and induces the identity on $F_{\ge d}/F_{\ge d+1}$.
+
+\subsection{Initial forms and source operators}
+
+For $k\ge1$ let $L_k$ be the derivation of $\La$ with $L_k(h_m)=(m-k)h_{m-k}$, where $h_j=0$ for $j\le0$. $L_k$
+is induced by the reparametrization $t\mapsto t+\varepsilon t^{k+1}$ of the series variable, since
+$u(t+\varepsilon t^{k+1})=u+\varepsilon t^{k+1}u'$. It preserves length and lowers weight by $k$.
+Reparametrizations of $t$ commute with every pointwise map $u\mapsto\phi(u)$, so each $L_k$ commutes with every
+$D_V$. Since $[L_a,L_b]=(a-b)L_{a+b}$, the operators $L_1,L_2$ generate all $L_k$. Let $U(S)$ denote the algebra
+they generate.
+
+\begin{proposition}\label{initial}
+Fix $\mu$, let $\pi_d\colon F_{\ge d}\to\La_{\cdot,d}$ be the projection to length $d$, and put
+\[
+  I_{n,d}=\pi_d\bigl(\ker D_{V_\mu}\cap F_{\ge d}\cap\La^n\bigr),\qquad I_d=\textstyle\bigoplus_nI_{n,d}.
+\]
+Then $\dim(\ker D_{V_\mu}\cap\La^n)=\sum_d\dim I_{n,d}$, $I_{n,d}\subseteq K_{n,d}$, and $I_d$ is a $U(S)$-stable
+subspace of $K_d$.
+\end{proposition}
+
+\begin{proof}
+The kernel of $\pi_d$ on $\ker D_{V_\mu}\cap F_{\ge d}$ is $\ker D_{V_\mu}\cap F_{\ge d+1}$, which gives the
+dimension count. Since $D_{V_\mu}=D-\mu D_{u^3}+\dots$ and $D_{u^j}$ raises length by $j-1$, the length-$(d+1)$
+part of $D_{V_\mu}f$ is $D(\pi_df)$, so $I_{n,d}\subseteq K_{n,d}$. Each $L_k$ preserves $F_{\ge d}$ and length
+and commutes with $D_{V_\mu}$, so $I_d$ is $U(S)$-stable.
+\end{proof}
+
+By Theorem~\ref{thmC}, $K_{n,d}=0$ for $n>d^2$, and $K_{d^2,d}$ is one-dimensional. Let $T_d$ span it.
+
+\begin{theorem}[Lifting the top invariant]\label{thmL}
+For every $d\ge1$ and every $\mu$, $T_d\in I_{d^2,d}$. That is, some element of $\ker D_{V_\mu}\cap\La^{d^2}$ has
+no component of length $<d$ and has length-$d$ component $T_d$.
+\end{theorem}
+
+\begin{theorem}[Cyclicity]\label{cyc}
+For every $d\ge1$, $K_d=U(S)\cdot T_d$.
+\end{theorem}
+
+These are proved in Sections~\ref{sec:L} and~\ref{sec:cyc}.
+
+\section{Proof of Theorem~\ref{thmL}}\label{sec:L}
+
+\subsection{Invariant coordinates}
+
+Let $W(u)=-1/u+\mu\log u$. Then $W'(u)V_\mu(u)=1$, so $D_{V_\mu}$ sends the series $W(u(t))$ to $1$. Write
+\[
+  c'_k=[t^k]\,\frac{h_1t}{u(t)},\qquad l_k=[t^k]\log\frac{u(t)}{h_1t},\qquad e_k=c'_{k+1}-\mu h_1l_k\quad(k\ge1).
+\]
+Then $\La[1/h_1]=\Q[h_1^{\pm1},c'_1,e_1,e_2,\dots]$, and in these coordinates $D_{V_\mu}=-h_1\,\partial/\partial c'_1$.
+So $\ker D_{V_\mu}$ on $\La[1/h_1]$ is $\Q[h_1^{\pm1},e_1,e_2,\dots]$, and $e_k$ has weight $k+1$. Every element
+of $\ker D_{V_\mu}\cap\La^n$ is $\sum_ah_1^aG_a(e)$ with $G_a\in\Q[x_1,x_2,\dots]$ of weight $n-a$, where
+$\operatorname{wt}x_k=k+1$.
+
+\subsection{A factorization model}
+
+Treat $\mu$ as an indeterminate. Let $\mathcal R=\Q[\mu][h_1,\zeta,A_1,A_2,\dots]$, and embed $\La[\mu]$ by
+writing $u(t)/t=(h_1-\zeta t)/A(t)$ with $A=1+A_1t+A_2t^2+\cdots$.
+
+\begin{lemma}\label{fact}
+$\La[\mu]=\La[\mu][1/h_1]\cap\mathcal R$.
+\end{lemma}
+
+\begin{proof}
+Modulo $h_1$ the embedding sends $h_k\mapsto-\zeta[t^{k-2}]A^{-1}$, which is injective on $\Q[h_2,h_3,\dots]$. So if
+$h_1$ divides the image of $F$ in $\mathcal R$, then $h_1$ divides $F$ in $\La$. Induct on the power of $h_1$.
+\end{proof}
+
+In $\mathcal R$ we have $h_1t/u=A\sum_j(\zeta/h_1)^jt^j$ and $\log(u/h_1t)=\log(1-\zeta t/h_1)-\log A$. This gives
+\[
+  h_1^{k+1}e_k=\Gamma_{k+1}+\mu h_1^2\Bigl(\frac{\zeta^k}{k}+h_1^k\lambda_k\Bigr),\qquad
+  \Gamma_k=\sum_{j\le k}A_jh_1^j\zeta^{k-j},\quad \lambda_k=[t^k]\log A .
+\]
+Put $d_j=A_jh_1^j$ and $\nu=\mu h_1^2$, and set $\zeta=1$. Then $h_1^{k+1}e_k=S_{k+1}+\nu(1/k+\pi_k)$, where
+$S_k=1+d_1+\dots+d_k$ and $\pi_k=[s^k]\log(1+\sum_jd_js^j)$.
+
+Setting $\zeta=1$ loses nothing. With $\operatorname{wt}\zeta=2$, $\operatorname{wt}d_j=2j$ and
+$\operatorname{wt}\nu=2$, each $h_1^{k+1}e_k$ is homogeneous, so the $\zeta$-exponent of every monomial is fixed by
+its $(d,\nu)$-part. Moreover distinct monomials in $(d,\nu)$ map to distinct monomials in $(A,\mu,h_1)$. So the
+$h_1$-adic valuation of a polynomial $P(d,\nu)$ equals its \emph{order}: the least weight of its monomials, with
+$\operatorname{wt}d_j=j$ and $\operatorname{wt}\nu=2$. Combining with Lemma~\ref{fact}:
+
+\begin{lemma}[d-model]\label{dmodel}
+Let $G_{a_0+i}\in\Q[x]$ have weight $n-a_0-i$. Then
+$\sum_i\mu^ih_1^{a_0+i}G_{a_0+i}(e)\in\La[\mu]^n$ if and only if
+$\sum_i\nu^iG_{a_0+i}\bigl(S_{k+1}+\nu(1/k+\pi_k)\bigr)$ has order at least $n-2a_0$. (Here $x_k$ is replaced by
+$S_{k+1}+\nu(1/k+\pi_k)$.)
+\end{lemma}
+
+Let $z_1=x_1-1$ and $z_k=x_k-x_{k-1}$ for $k\ge2$, with weights $1,3,4,5,\dots$. Under $x_k\mapsto S_{k+1}$ we
+have $z_1\mapsto d_1+d_2$ and $z_k\mapsto d_{k+1}$, so the order of $Q(S)$ equals the weighted order of $Q$ at
+$x=(1,1,\dots)$.
+
+\begin{lemma}\label{harmless}
+For every polynomial $Q(x,\nu)$, $\operatorname{ord}Q(S+\nu\pi)\ge\operatorname{ord}Q(S)$.
+\end{lemma}
+
+\begin{proof}
+Expand by Taylor's formula. $\partial/\partial x_k=\partial_{z_k}-\partial_{z_{k+1}}$ lowers weighted order by at
+most $k+2$, and $\nu\pi_k$ has order at least $k+2$.
+\end{proof}
+
+\subsection{The forest--Heine polynomial}
+
+Let $m=d-1$, let $\rho$ be the moment functional $\langle\rho,s^k\rangle=x_{k+1}$, and let
+$\Delta=\prod_{i<j}(s_i-s_j)$. By Heine's formula, $G_d:=\det(x_{i+j-1})_{i,j\le m}=\frac1{m!}\langle\rho^{\otimes
+m},\Delta^2\rangle$.
+
+\begin{definition}
+$F(x,\nu)=\frac1{m!}\sum_{\mathcal F}(-\nu)^{\#\mathrm{children}}\int\Delta^2$, where $\mathcal F$ runs over the
+rooted forests on $[m]$. Each root $i$ carries $\rho(ds_i)$. Each child $c$ with parent $p$ is integrated over
+$[0,s_p]$ with Lebesgue measure, using the polynomial rule $s^k\mapsto s_p^{k+1}/(k+1)$.
+\end{definition}
+
+The $\nu^i$ term of $F$ has weight $m^2+m-i$, and $F(x,0)=G_d$. Put
+\[
+  F_d:=\sum_i\mu^ih_1^{d+i}\,[\nu^i]F(e).
+\]
+
+\begin{proposition}\label{Fprop}
+$F(S+\nu(1/k+\pi_k),\nu)$ has order at least $m^2-1$. Consequently $F_d\in\La[\mu]^{d^2}\cap\ker D_{V_\mu}$.
+\end{proposition}
+
+\begin{proof}
+\emph{Step 1.} Apply Lemma~\ref{harmless} to $Q(x,\nu)=F(x+\nu v,\nu)$ with $v_k=1/k$. It suffices to bound the
+order of $F(S+\nu v,\nu)$. Since $\langle\mathrm{Leb}[0,1],s^k\rangle=1/(k+1)$, the vector $S+\nu v$ is the moment
+sequence of $\rho+\nu\,\mathrm{Leb}[0,1]$.
+
+\emph{Step 2.} Write $\langle\rho,s^k\rangle=S_{k+2}=B-\gamma_k$, where $B=1+\sum_jd_j$ has order $0$ and
+$\gamma_k=\sum_{i\ge k+3}d_i$ has order at least $k+3$. It suffices to treat $B$, $\gamma_k$ and $\nu$ as
+independent variables of orders $0$, $k+3$ and $2$, and to show that every surviving monomial has order at least
+$m^2-1$.
+
+\emph{Step 3.} Realize this with a parameter $\tau$, where $0<\tau<1/C$.
+\begin{itemize}
+\item Take $\rho=B\delta_1-J_\tau$, with $J_\tau(g)=\tau^3\int g(\tau y)\,\omega(dy)$, where $\omega$ is a
+polynomial density on $[0,C]$ with the finitely many prescribed moments $\gamma_k$. Replace $\nu$ by $\tau^2\nu$.
+\item Then $E(\tau):=F(\text{moments of }\rho+\tau^2\nu\,\mathrm{Leb})$ is the polynomial evaluated at
+$(B,\tau^{k+3}\gamma_k,\tau^2\nu)$. So it suffices to show $E(\tau)=O(\tau^{m^2-1})$ for all real data.
+\end{itemize}
+
+\emph{Step 4.} For a given child set, sum over parent maps. A cycle in the parent map would force
+$s_{c_1}<\dots<s_{c_1}$, and ties have measure zero. So the sum of the indicator products is
+$\prod_c\mathbf 1_{s_c\ge0}N_c(s)$, where $N_c=\#\{q\ne c:s_q>s_c\}$. Expand $\rho+\nu\,\mathrm{Leb}$ at the roots
+and group the Lebesgue roots with the children. This gives
+\[
+  E=\frac1{m!}\sum_{U\subseteq[m]}\nu^{|U|}\int\prod_{i\notin U}\rho(ds_i)\prod_{i\in U}
+  \bigl(\mathbf 1_{[0,1]}(s_i)-N_i(s)\bigr)\mathbf 1_{s_i\ge0}\,ds_i\ \Delta(s)^2 .
+\]
+
+\emph{Step 5.} The points are of three kinds: $e$ points at $1$ (from $B\delta_1$); cluster points (roots from
+$J_\tau$, and $U$-points in $[0,C\tau]$); and $h$ high $U$-points in $(C\tau,1]$.
+\begin{itemize}
+\item If $e\ge2$ then $\Delta=0$.
+\item A $U$-point above $1$ that is maximal among the $U$-points has density $0$, so every $U$-point lies in
+$[0,1]$.
+\item For a high $U$-point, $N_i=e+\#\{\text{high }U\text{-points above it}\}$. So the topmost high point has
+density $1-e$ and the next one has density $-e$. Hence $e=1$ forces $h=0$, and $e=0$ forces $h\le1$.
+\end{itemize}
+
+\emph{Step 6.} Each cluster point costs $\tau^3$, each high point costs $\tau^2$, and each pair of cluster points
+contributes $(s_i-s_j)^2=O(\tau^2)$. With $e+c+h=m$, a configuration is $O(\tau^{3c+c(c-1)+2h})$. The three
+surviving cases $(e,h)=(1,0),(0,1),(0,0)$ give the exponents $m^2-1$, $m^2+1$ and $m^2+2m$.
+
+\emph{Conclusion.} By Lemma~\ref{dmodel} with $a_0=d$ and $n=d^2$, the order bound $m^2-1=n-2a_0$ shows that
+$F_d\in\La[\mu]$. Finally $F_d\in\ker D_{V_\mu}$, because it is a polynomial in $h_1$ and the $e_k$.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thmL}]
+Let $\sigma_\lambda$ be the automorphism $h_k\mapsto\lambda h_k$. Then $c'_k$ and $l_k$ are $\sigma$-invariant, and
+$\sigma_\lambda e_k(\mu)=e_k(\lambda\mu)$, so $\sigma_\lambda F_d(\mu)=\lambda^dF_d(\lambda\mu)$. Writing
+$F_d(\mu)=\sum_j\mu^j\Phi_j$, each $\Phi_j$ therefore has length exactly $d+j$. So $F_d$ has no component of length
+$<d$, and its length-$d$ component is $F_d(0)=h_1^dG_d(e|_{\mu=0})$. This lies in $K_{d^2,d}$: it is a nonzero
+element, by the case $\nu=0$ of Proposition~\ref{Fprop}, and $K_{d^2,d}$ is one-dimensional. Specializing $\mu$ to
+any value gives an element of $\ker D_{V_\mu}\cap\La^{d^2}$ with initial form $T_d$, up to scalar.
+\end{proof}
+
+\section{Proof of Theorem~\ref{cyc}}\label{sec:cyc}
+
+\subsection{Duality with the coinvariant side}
+
+On $\Q[x_1,\dots,x_N]$ let $E_k=\sum_ix_i^{k+1}\partial/\partial x_i$ for $k\ge1$. $E_k$ is a derivation, commutes
+with $S_N$, and maps $p_r$ to $rp_{r+k}$. So it preserves $\La^+\Q[x]$ and acts on $R_N$ and on
+$N_\lambda:=\Hom_{S_N}(S^\lambda,R_N)$.
+
+\begin{lemma}\label{dual}
+Under the isomorphism $K_{n,d}\cong(N_{(d,d)})_n^*$ of Theorem~\ref{thmC}, $L_k$ corresponds to $\pm E_k^{\,T}$.
+\end{lemma}
+
+\begin{proof}
+Follow the proof of Theorem~\ref{thmC}, with $m$ large enough to serve all weights at once.
+\begin{itemize}
+\item Since $(v\circ\phi)/(w\circ\phi)=(v/w)\circ\phi$, $L_k$ corresponds to the derivation of pair functions
+induced by $\xi_k=t^{k+1}\partial_t\in\mathfrak{gl}(V)$, acting on both $v$ and $w$. This preserves $\{v_0=0\}$ and
+$\{w_0=1\}$.
+\item Since $[\xi_k,t^j\cdot]=jt^{j+k}\cdot$, $\xi_k$ normalizes the Lie algebra of $U_1$, so it preserves
+$\Pl_d^T$.
+\item The isomorphism $\Pl_d\cong M^*$ is $\mathfrak{gl}(V)$-equivariant, and $\xi_k$ acts on
+$V^{\otimes2d}=\Q[x]/(x_i^m)$ as $E_k$, because $\xi_kt^a=at^{a+k}$.
+\item $E_k$ preserves $\La^+M$ and commutes with $S_{2d}$, and the identification
+$M/\La^+M\cong N_{(d,d)}$ is $E$-equivariant.
+\end{itemize}
+The sign does not affect spans.
+\end{proof}
+
+\begin{lemma}\label{socle}
+Let $N$ be a finite-dimensional graded module on which each $E_k$ raises degree by $k$. Suppose its top degree is
+one-dimensional, and let $\theta$ span $(N^*)_{\mathrm{top}}$. Then $U(E^T)\cdot\theta=N^*$ if and only if
+$\soc(N):=\{x:E_kx=0\ \forall k\}$ lies in the top degree.
+\end{lemma}
+
+\begin{proof}
+$(U\cdot\theta)^\perp$ is a graded $E$-submodule meeting the top degree in $0$. A nonzero graded $E$-submodule
+contains a nonzero homogeneous socle vector, because $E$ acts nilpotently. Conversely, a socle vector of lower
+degree spans a submodule inside $(U\cdot\theta)^\perp$.
+\end{proof}
+
+The top weight of $K_d$ is $d^2$, the top degree of $f^{(d,d)}(q)$, with coefficient $1$. By
+Lemmas~\ref{dual} and~\ref{socle}, Theorem~\ref{cyc} is equivalent to: \emph{$\soc_E(N_{(d,d)})$ is its top degree
+$d^2$.}
+
+\subsection{Gorenstein duality}
+
+Let $N=2d$ and $\mathrm{top}=\binom{N}{2}$. Define $c\colon\Q[x]_{\mathrm{top}}\to\Q$ by $\mathcal A(g)=c(g)\Delta$,
+where $\mathcal A$ is antisymmetrization and $\Delta$ the Vandermonde. Then $c$ vanishes on $\La^+\Q[x]$, and
+$\langle f,g\rangle=c(fg)$ is a perfect pairing on $R_N$ that pairs $\lambda$-isotypic parts with
+$\lambda'$-isotypic parts. Since $\mathcal A(E_kh)=E_k(\mathcal Ah)=0$ for $\deg h<\mathrm{top}$, we get
+$c(E_kh)=0$, so $\langle E_kf,g\rangle=-\langle f,E_kg\rangle$. Hence $N_{(d,d)}$ and $N_{(2^d)}$ are perfectly
+paired, between degrees $j$ and $\mathrm{top}-j$, with $E$ skew. Then
+$\soc(N_{(d,d)})^\perp=\sum_kE_kN_{(2^d)}$, and graded Nakayama gives:
+
+\begin{corollary}
+Theorem~\ref{cyc} holds if and only if $N_{(2^d)}$ is generated under $E$ by its bottom degree $d(d-1)$. That
+degree is spanned by the Specht vector $\Delta(x_1..x_d)\Delta(x_{d+1}..x_{2d})$.
+\end{corollary}
+
+\subsection{The Grassmannian model}
+
+Let $X=\{x_1..x_d\}$, $Y=\{x_{d+1}..x_{2d}\}$ and $H=S_d\times S_d$.
+\begin{itemize}
+\item $\operatorname{Ind}_H^{S_{2d}}\mathrm{sgn}=\bigoplus_{i\le d}S^{(2^i,1^{2d-2i})}$. So the sign-isotypic part
+$R^{\mathrm{sgn}_H}$ is $\bigoplus_iN_{(2^i,1^{2d-2i})}$, $E$-equivariantly.
+\item Multiplication by $\Delta_X\Delta_Y$ is a bijection
+$R^H=(\La_X\otimes\La_Y)/\La^+\to R^{\mathrm{sgn}_H}$. Here $R^H\cong G_{d,2d}:=H^*(\Gr(d,2d))=\La/I_{d,2d}$, where
+$I_{j,n}=\operatorname{span}\{s_\lambda:\lambda\not\subseteq j\times(n-j)\}$.
+\item One computes $E_k\Delta(Z)=\Delta(Z)\sum_{i<j}h_k(z_i,z_j)$, that is
+$E_k\Delta(Z)/\Delta(Z)=(|Z|-\tfrac{k+1}2)p_k(Z)+\tfrac12\sum_{a+b=k}p_a(Z)p_b(Z)$ with $a,b\ge1$. Since
+$p_a(Y)\equiv-p_a(X)$ in $R$, we get $E_k(\Delta_X\Delta_Yf)=\Delta_X\Delta_Y\,\fE_kf$ with
+\[
+  \fE_k:=E_k+Q_k,\qquad Q_k=\sum_{a+b=k,\ a,b\ge1}p_ap_b .
+\]
+\item $n(\lambda)$ strictly decreases along dominance, so the degree-$d(d-1)$ part of $R^{\mathrm{sgn}_H}$ is the
+bottom of $N_{(2^d)}$. It corresponds to $1\in G_{d,2d}$, and $\dim N_{(2^d)}=f^{(2^d)}=\mathrm{Cat}(d)$.
+\end{itemize}
+
+\begin{corollary}\label{grassred}
+Theorem~\ref{cyc} holds if and only if $\dim U(\fE)\cdot1\ge\mathrm{Cat}(d)$ in $G_{d,2d}$.
+\end{corollary}
+
+On $\La=\Q[p_1,p_2,\dots]$, $E_k$ acts by $p_r\mapsto rp_{r+k}$, and $Q_k$ by multiplication. Both preserve each
+$I_{j,n}$, because $I_{j,n}$ is the kernel of the $E$-equivariant map $\La\to R_n^{S_j\times S_{n-j}}$.
+
+\subsection{Twisted box modules}
+
+For $c\in\mathbb Z$ put $\fE^{(c)}_k=E_k+Q_k-c\,p_k$, acting on $\La$ and on every $G_{j,n}=\La/I_{j,n}$. Let
+$a_c(j,n)=\dim U(\fE^{(c)})\cdot1\subseteq G_{j,n}$ and $L^{(c)}=U(\fE^{(c)})\cdot1\subseteq\La$. Write
+$f^{(a,b)}$ for the number of standard tableaux of shape $(a,b)$, with $f^{(a,b)}=0$ if $b>a$.
+
+\begin{lemma}\label{exact}
+Let $m=n-j$.
+\begin{enumerate}
+\item[(i)] The quotient $\rho\colon G_{j,n}\to G_{j,n-1}$ commutes with every $\fE^{(c)}$. Multiplication by
+$h_m$ induces an injection $\iota\colon G_{j-1,n-1}\to G_{j,n}$, $s_\mu\mapsto s_{(m,\mu)}$, with image
+$\ker\rho$, and $\fE^{(c)}_k\iota=\iota\fE^{(c+1)}_k$.
+\item[(ii)] The quotient $\rho'\colon G_{j,n}\to G_{j-1,n-1}$ commutes with $\fE^{(c)}$. Multiplication by $e_j$
+induces an injection $\iota'\colon G_{j,n-1}\to G_{j,n}$, $s_\mu\mapsto s_{\mu+(1^j)}$, with image $\ker\rho'$, and
+$\fE^{(c)}_k\iota'=\iota'\fE^{(c-1)}_k$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\begin{itemize}
+\item The statements about images follow from Pieri's rule.
+\item For (i): $E_kH(z)=H(z)\sum_rp_{r+k}z^r$ gives $E_kh_m=\sum_{s>k}p_sh_{m+k-s}$. By Newton's identity,
+$E_kh_m+p_kh_m=(m+k)h_{m+k}-\sum_{s<k}p_sh_{m+k-s}$. Every $h$ on the right has index $>m$, so it lies in
+$I_{j,n}$. Hence $\fE^{(c)}_k(h_mf)=h_m(\fE^{(c)}_k-p_k)f$ in $G_{j,n}$.
+\item For (ii): similarly $E_ke_j-p_ke_j=(-1)^k[(j+k)e_{j+k}-\sum_{s<k}(-1)^{s-1}p_se_{j+k-s}]$. Every $e$ here
+has index $>j$, so it lies in $I_{j,n}$.
+\end{itemize}
+\end{proof}
+
+\begin{lemma}\label{members}
+\begin{itemize}
+\item[(a)] $e_j=\frac{(-1)^j}{j!}(\fE^{(1)}_1)^j\cdot1\in L^{(1)}$.
+\item[(b)] $C_m:=\frac12(h_m+(-1)^me_m)\in L^{(0)}$ for every $m$ (Theorem~\ref{claimA}). Hence
+$h_m\in L^{(0)}+I_{j,j+m}$ whenever $1\le j<m$, because $e_m\in I_{j,j+m}$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}[Proof of (a)]
+With $\phi(z)=\sum p_rz^r/r$ we have $\fE^{(c)}_1e^{\lambda\phi(z)}=\partial_ze^{\lambda\phi(z)}-(\lambda+c)p_1
+e^{\lambda\phi(z)}$, since $Q_1=0$. Take $\lambda=-1$ and $c=1$. Since $e^{-\phi(z)}=\sum_r(-1)^re_rz^r$, we get
+$\fE^{(1)}_1\varepsilon_{r-1}=r\varepsilon_r$ for $\varepsilon_r=(-1)^re_r$.
+\end{proof}
+
+Moreover $\omega I_{j,n}=I_{n-j,n}$, and $\omega\fE^{(0)}_k\omega=(-1)^k\fE^{(0)}_k$, so $a_0(j,n)=a_0(n-j,n)$.
+
+\begin{theorem}\label{induction}
+$a_0(j,n)\ge f^{(n-j,j)}$ for $n\ge2j$, and $a_1(j,n)\ge f^{(n-j,j)}$ for $n\ge2j+1$.
+\end{theorem}
+
+\begin{proof}
+Induct on $n$; for $j=0$, $G_{0,n}=\Q$. For a surjection with kernel $\iota(G')$ as in Lemma~\ref{exact},
+$\dim U\cdot1\ge\dim\rho(U\cdot1)+\dim(U\cdot1\cap\ker\rho)$, and $\rho(U\cdot1)$ is the cyclic module in the target.
+\begin{itemize}
+\item \emph{$c=0$, $2j<n$.} By Lemma~\ref{members}(b), $h_m\in U\cdot1$. Hence $U\cdot1\cap\ker\rho\supseteq
+\iota(U^{(1)}\cdot1)$, so $a_0(j,n)\ge a_0(j,n-1)+a_1(j-1,n-1)\ge f^{(n-j-1,j)}+f^{(n-j,j-1)}=f^{(n-j,j)}$.
+\item \emph{$c=0$, $n=2j$.} By $\omega$-symmetry and the previous case,
+$a_0(j,2j)\ge a_0(j,2j-1)=a_0(j-1,2j-1)\ge f^{(j,j-1)}=f^{(j,j)}$.
+\item \emph{$c=1$, $n\ge2j+1$.} $e_j\in U^{(1)}\cdot1$ by Lemma~\ref{members}(a), and Lemma~\ref{exact}(ii) applies.
+So $a_1(j,n)\ge a_1(j-1,n-1)+a_0(j,n-1)\ge f^{(n-j,j-1)}+f^{(n-j-1,j)}=f^{(n-j,j)}$.
+\end{itemize}
+\end{proof}
+
+\subsection{A screening operator}
+
+Let $\phi(z)=\sum_rp_rz^r/r$, $\Phi(z)=z\phi'(z)$ and $H(z)=e^{\phi(z)}$. Let $f[X-w]$ denote the substitution
+$p_r\mapsto p_r-w^r$. Put $L=L^{(0)}=U(\fE)\cdot1$ with $\fE_k=E_k+Q_k$.
+
+\begin{lemma}\label{lowerdim}
+$\dim L_m\ge p(m)-p(m-1)$.
+\end{lemma}
+
+\begin{proof}
+$E_k$ preserves $p$-length, and $Q_k$ raises it by exactly $2$. So the top-length part of
+$\fE_{\lambda_1}\cdots\fE_{\lambda_l}\cdot1$ is $\prod Q_{\lambda_i}$. For $k\ge2$ the $Q_k$ are algebraically
+independent: $\partial Q_k/\partial p_{k-1}=2p_1$, so the Jacobian is triangular. Hence the $\fE_\lambda\cdot1$
+with $\lambda\vdash m$ and all parts $\ge2$ are independent, and there are $p(m)-p(m-1)$ of them.
+\end{proof}
+
+Define $J\colon\La_m\to\La_{m-1}$ by $Jf=\Res_zH(z)^2f[X-1/z]$.
+
+\begin{lemma}\label{intertw}
+$J(\fE_kf)=(\fE_k+2p_k)Jf$ and $J(1)=0$. Hence $J(L)=0$.
+\end{lemma}
+
+\begin{proof}
+Write $T_w$ for $f\mapsto f[X-w]$ and $D_w=\sum_rrw^{r-1}\partial_{p_r}$.
+\begin{itemize}
+\item One has $T_wE_kT_w^{-1}=E_k-w^{k+1}D_w$, $D_wT_wf=-\partial_w(T_wf)$, and
+$T_wQ_k=Q_k-2\sum_{a+b=k}w^ap_b+(k-1)w^k$.
+\item Put $w=1/z$ and $G=H(z)^2T_{1/z}f$. Using $E_k(H^2)=2H^2z^{-k}(\Phi-\sum_{s\le k}p_sz^s)$, these give
+\[
+  H(z)^2T_{1/z}(\fE_kf)=(\fE_k+2p_k)G+(k-1)z^{-k}G-z^{1-k}\partial_zG .
+\]
+\item The last two terms equal $-\partial_z(z^{1-k}G)$, which has zero residue.
+\item $J(1)=\Res H(z)^2=0$, because $H(z)^2$ is a power series in $z$.
+\end{itemize}
+\end{proof}
+
+\begin{lemma}\label{Jkill}
+$J(C_m)=0$.
+\end{lemma}
+
+\begin{proof}
+$h_m[X-w]=h_m-wh_{m-1}$, so $Jh_m=-h_{m-1}$. Next $e_m[X-w]=\sum_i(-w)^ie_{m-i}$, so
+$\sum_mu^mJe_m=-uE(u)H(-u)^2=-uH(-u)$. This gives $J((-1)^me_m)=h_{m-1}$.
+\end{proof}
+
+\begin{lemma}\label{surj}
+$J\colon\La_m\to\La_{m-1}$ is surjective.
+\end{lemma}
+
+\begin{proof}
+Equip $\La$ with the positive definite form $\langle p_\lambda,p_\mu\rangle=\delta_{\lambda\mu}z_\lambda
+2^{-\ell(\lambda)}$, for which $p_r^\dagger=\frac r2\partial_{p_r}$. Define
+\begin{align*}
+  J^\vee f&=\Res_w\,w^{-2}H(w)^{-2}f[X+1/w],\\
+  Af&=\Res_z\,z^2H(z)^2f[X-1/z],\\
+  A^\vee f&=\Res_w\,w^{-4}H(w)^{-2}f[X+1/w].
+\end{align*}
+Write $H(z)^2=\exp(\sum2p_rz^r/r)$ and $f[X-1/z]=\exp(-\sum z^{-r}\partial_{p_r})f$, and substitute $z=1/w$. One
+finds $J^\dagger=J^\vee$ and $A^\dagger=A^\vee$.
+
+The compositions $JJ^\vee$ and $A^\vee A$ come from the same kernel,
+\[
+  z^2w^{-2}(z-w)^{-2}H(z)^2H(w)^{-2}f[X+1/w-1/z],
+\]
+expanded in $|w|<|z|$ and in $|z|<|w|$ respectively. By the formal identity
+$\iota_{z,w}(z-w)^{-2}-\iota_{w,z}(z-w)^{-2}=\partial_w\delta(z,w)$ and integration by parts,
+\[
+  JJ^\vee-A^\vee A=\Res_w\,w^{-2}\partial_z\bigl(z^2H(z)^2H(w)^{-2}f[X+1/w-1/z]\bigr)\big|_{z=w}=2f .
+\]
+The last equality holds because the only term with nonzero residue is $2w^{-1}f$. Hence
+$JJ^\dagger=2+A^\dagger A$, which is positive definite on each $\La_{m-1}$. So $J$ is surjective.
+\end{proof}
+
+\begin{theorem}\label{claimA}
+$L_m=\ker(J|_{\La_m})$, and $C_m\in L$ for all $m$.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{surj}, $\dim\ker J|_{\La_m}=p(m)-p(m-1)$. By Lemmas~\ref{lowerdim} and~\ref{intertw}, $L_m\subseteq\ker
+J$ and $\dim L_m\ge p(m)-p(m-1)$, so the two are equal. Lemma~\ref{Jkill} then gives $C_m\in L$.
+\end{proof}
+
+\begin{remark}
+With $p_r=b_r/\sqrt2$, the operators $\fE_k$ are the Virasoro modes $L_{-k}$ of the $c=1$ Fock space. $J$, $J^\vee$, $A$ and $A^\vee$ are zero modes of the level-one $\widehat{\mathfrak{sl}}_2$ currents, and the identity in
+Lemma~\ref{surj} is the commutator $[J_0^+,J_0^-]=2$ in momentum $\sqrt2$ \cite{KR}. None of this is needed for
+the proof.
+\end{remark}
+
+\begin{proof}[Proof of Theorem~\ref{cyc}]
+Theorem~\ref{induction} gives $a_0(d,2d)\ge f^{(d,d)}=\mathrm{Cat}(d)$. Apply Corollary~\ref{grassred} and the
+reductions above.
+\end{proof}
+
+\section{Proof of Theorems~\ref{main} and~\ref{refined}}\label{sec:proof}
+
+By Proposition~\ref{R1}, the nullspace of $R_n-D_n$ is identified with $N=\ker D_v\cap\La^n$. By
+Lemma~\ref{normal}, $\Theta^{-1}N=\ker D_{V_\mu}\cap\La^n$ with $\mu=\frac16$. Since $\Theta$ preserves the
+filtration $F_{\ge d}$ and induces the identity on its graded pieces, it suffices to prove Theorem~\ref{refined}
+for $D_{V_\mu}$.
+
+By Proposition~\ref{initial}, the graded pieces have dimensions $\dim I_{n,d}$, and $I_d\subseteq K_d$ is
+$U(S)$-stable. By Theorem~\ref{thmL}, $T_d\in I_d$. By Theorem~\ref{cyc}, $K_d=U(S)\cdot T_d\subseteq I_d$. Hence
+$I_{n,d}=K_{n,d}$, and Theorem~\ref{thmC} gives $\dim I_{n,d}=[q^{n-d}]C_d(q)$, which is Theorem~\ref{refined}.
+Summing over $d$ and using Section~\ref{sec:dyck} gives $\dim\ker(R_n-D_n)=a(n)$.\qed
+
+\section{Remarks}
+
+\begin{remark}
+Theorem~\ref{thmC} identifies the invariants of $u\mapsto u/(1-\varepsilon u)$ acting on power series with the
+dual of $\Hom_{S_{2d}}(S^{(d,d)},R_{2d})$. Explicitly, for every functional $\nu$ on $R_{2d}$, the polynomial
+$f_\nu(u)=\nu\bigl(\prod_{i=1}^d(u(x_i)-u(y_i))\bigr)$ is an invariant. The reason is that the flow multiplies the
+product by an $S_{2d}$-symmetric series with constant term $1$, which acts trivially on $R_{2d}$.
+\end{remark}
+
+\begin{remark}
+The analogue of the statement ``$\soc_E N_\lambda$ is the top degree'' fails for general shapes. For example, for
+$\lambda=(3,2,1)$ the socle of $N_\lambda$ contains a vector one degree below the top. Two-row shapes are special.
+\end{remark}
+
+\begin{remark}
+All identities in Sections~\ref{sec:L} and~\ref{sec:cyc} were also checked by exact computation (see
+Reproducibility):
+\begin{itemize}
+\item the nullity of $R_n-D_n$, computed from the definition, equals $a(n)$ for $n\le17$;
+\item $\dim K_{n,d}$ matches Theorem~\ref{thmC} for $n\le17$, $d\le7$;
+\item the lift $F_d$ satisfies $D_{V_\mu}F_d=0$ identically in $\mu$ for $d\le7$;
+\item Theorem~\ref{cyc} holds directly in $\La$ for $d\le7$;
+\item the identities of Lemmas~\ref{intertw}--\ref{surj} hold for $m\le13$.
+\end{itemize}
+\end{remark}
+
+\subsection*{Reproducibility}
+{\sloppy All code is available at
+\url{https://github.com/prajitchennupati/math/tree/main/clifford-stanley-nullity-conjecture}; paths below are
+relative to that folder. Every script uses exact arithmetic (python-flint 0.9, SymPy 1.14).
+\begin{itemize}
+\item \texttt{paper/code/verify.py} computes the nullity of $R_n-D_n$ from the definition, enumerates A129528, checks
+MacMahon's identity, and computes $\dim K_{n,d}$.
+\item \texttt{paper/code/plucker.py} computes the $T$-invariant Pl\"ucker functions of Theorem~\ref{thmC}.
+\item \texttt{paper/code/normal\_form.py} checks Lemma~\ref{normal}.
+\item \texttt{paper/code/lift.py} builds $F_d$ from the forest sum and checks Theorem~\ref{thmL}.
+\item \texttt{paper/code/cyclicity.py} checks Theorem~\ref{cyc}.
+\item \texttt{paper/code/fock.py} checks Lemmas~\ref{exact}--\ref{surj}.
+\end{itemize}
+This paper has not been refereed.\par}
+
+\begin{thebibliography}{99}
+\bibitem{Che} C.~Chevalley, \emph{Invariants of finite groups generated by reflections}, Amer. J. Math. 77 (1955),
+778--782.
+\bibitem{CS04} P.~Clifford, R.~P.~Stanley, \emph{Bottom Schur functions}, Electron. J. Combin. 11 (2004), \#R67;
+arXiv:math/0311382.
+\bibitem{Ful} W.~Fulton, \emph{Young Tableaux}, London Math. Soc. Student Texts 35, Cambridge, 1997.
+\bibitem{KR} V.~G.~Kac, A.~K.~Raina, \emph{Bombay Lectures on Highest Weight Representations of
+Infinite-Dimensional Lie Algebras}, World Scientific, 1987.
+\bibitem{Mac} I.~G.~Macdonald, \emph{Symmetric Functions and Hall Polynomials}, 2nd ed., Oxford, 1995.
+\bibitem{MacM} P.~A.~MacMahon, \emph{Combinatory Analysis}, Cambridge, 1915--1916.
+\bibitem{OEIS} OEIS Foundation, \emph{The On-Line Encyclopedia of Integer Sequences}, sequence A129528,
+\url{https://oeis.org/A129528}.
+\bibitem{Sta79} R.~P.~Stanley, \emph{Invariants of finite groups and their applications to combinatorics}, Bull.
+Amer. Math. Soc. 1 (1979), 475--511.
+\bibitem{SymCat} P.~Alexandersson, \emph{The symmetric functions catalog}, \url{https://www.symmetricfunctions.com/schurMisc.htm}
+(accessed November 2026).
+\bibitem{Tak} F.~Takens, \emph{Normal forms for certain singularities of vectorfields}, Ann. Inst. Fourier 23
+(1973), 163--195.
+\end{thebibliography}
+
+\end{document}
